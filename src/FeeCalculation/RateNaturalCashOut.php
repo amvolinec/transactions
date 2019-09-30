@@ -1,4 +1,5 @@
 <?php
+
 namespace FeeCalculation;
 
 use Exception as ExceptionAlias;
@@ -11,7 +12,6 @@ class RateNaturalCashOut implements Rate
 {
 
     protected $transaction;
-    protected $class;
 
     public function __construct(TransactionInterface $transaction)
     {
@@ -26,18 +26,18 @@ class RateNaturalCashOut implements Rate
     {
         $fee_out = 0;
 
-        if (Storage::getTotal($this->transaction->get('user_id'), $this->transaction->get('date')) < Conf::MAX_WEEK_FREE
-            && Storage::getCount($this->transaction->get('user_id'), $this->transaction->get('date')) <= Conf::MAX_OUT_FREE) {
+        if (Storage::getTotal($this->transaction->getUserId(), $this->transaction->getDate()) < Conf::MAX_WEEK_FREE
+            && Storage::getCount($this->transaction->getUserId(), $this->transaction->getDate()) <= Conf::MAX_OUT_FREE) {
 
             if (
-                Converter::inEur($this->transaction->get('amount'), $this->transaction->get('currency')) >
+                Converter::inEur($this->transaction->getAmount(), $this->transaction->getCurrency()) >
                 Conf::MAX_WEEK_FREE
             ) {
-                $fee_out = Round::up($this->getDiscount() * Conf::OUT_PROC, Decimals::get($this->transaction->get('currency')));
+                $fee_out = Round::up($this->getDiscount() * Conf::OUT_PROC, Decimals::get($this->transaction->getCurrency()));
             }
 
         } else {
-            $fee_out = Round::up($this->transaction->get('amount') * Conf::OUT_PROC, Decimals::get($this->transaction->get('currency')));
+            $fee_out = Round::up($this->transaction->getAmount() * Conf::OUT_PROC, Decimals::get($this->transaction->getCurrency()));
         }
 
         Storage::save($this->transaction);
@@ -47,8 +47,8 @@ class RateNaturalCashOut implements Rate
 
     protected function getDiscount()
     {
-        return ('EUR' === $this->transaction->get('currency')) ?
-            $this->transaction->get('amount') - Conf::MAX_WEEK_FREE :
-            $this->transaction->get('amount') - Converter::convert(Conf::MAX_WEEK_FREE, 'EUR', $this->transaction->get('currency'));
+        return ('EUR' === $this->transaction->getCurrency()) ?
+            $this->transaction->getAmount() - Conf::MAX_WEEK_FREE :
+            $this->transaction->getAmount() - Converter::convert(Conf::MAX_WEEK_FREE, 'EUR', $this->transaction->getCurrency());
     }
 }

@@ -21,12 +21,12 @@ class InMemoryStorage implements Storage
      */
     public static function save(TransactionInterface $transaction): string
     {
-        $index = UserWeek::get($transaction->get('user_id'), $transaction->get('date'));
+        $index = UserWeek::get($transaction->getUserId(), $transaction->getDate());
         if (!isset(self::$storage[$index])) {
             self::$storage[$index]['amount'] = 0;
             self::$storage[$index]['count'] = 0;
         }
-        self::$storage[$index]['amount'] += Converter::convert($transaction->get('amount'), $transaction->get('currency'), 'EUR');
+        self::$storage[$index]['amount'] += Converter::convert($transaction->getAmount(), $transaction->getCurrency(), 'EUR');
         self::$storage[$index]['count']++;
         return $index;
     }

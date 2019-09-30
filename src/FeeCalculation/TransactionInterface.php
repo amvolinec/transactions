@@ -15,9 +15,15 @@ interface TransactionInterface
      */
     public function getRate(): float;
 
-    /**
-     * @param $name
-     * @return mixed
-     */
-    public function get($name);
+    public function getDate();
+
+    public function getUserId();
+
+    public function getUserType();
+
+    public function getOperationType();
+
+    public function getAmount();
+
+    public function getCurrency();
 }

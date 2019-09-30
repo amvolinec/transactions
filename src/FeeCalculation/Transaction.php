@@ -29,34 +29,37 @@ class Transaction implements TransactionInterface
 
     public function getRate(): float
     {
-        $result = 0;
-        try {
-            switch ($this->user_type . $this->operation_type) {
-                case Conf::NATURAL . Conf::CASH_IN:
-                case Conf::LEGAL . Conf::CASH_IN :
-                    $result = (new RateCashIn($this))->getRate();
-                    break;
-                case Conf::LEGAL . Conf::CASH_OUT :
-                    $result = (new RateLegalCashOut($this))->getRate();
-                    break;
-                case Conf::NATURAL . Conf::CASH_OUT:
-                    $result = (new RateNaturalCashOut($this))->getRate();
-                    break;
-                default:
-                    throw new \RuntimeException('Invalid user or operation types ' . $this->user_type . $this->operation_type);
-
-            }
-        } catch (\Exception $e) {
-            echo $e->getMessage();
-        }
-
-        return $result;
+        $rate = new GetRate();
+        return $rate->getRate($this);
     }
 
-    public function get($name)
+    public function getDate()
     {
-        if (isset($this->$name)) {
-            return $this->$name;
-        }
+        return $this->date;
+    }
+
+    public function getUserId()
+    {
+        return $this->user_id;
+    }
+
+    public function getUserType()
+    {
+        return $this->user_type;
+    }
+
+    public function getOperationType()
+    {
+        return $this->operation_type;
+    }
+
+    public function getAmount()
+    {
+        return $this->amount;
+    }
+
+    public function getCurrency()
+    {
+        return $this->currency;
     }
 }

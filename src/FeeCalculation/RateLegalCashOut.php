@@ -22,13 +22,13 @@ class RateLegalCashOut implements Rate
      */
     public function getRate()
     {
-        $fee = Round::up($this->transaction->get('amount') *
-            Conf::OUT_PROC, Decimals::get($this->transaction->get('currency')));
+        $fee = Round::up($this->transaction->getAmount() *
+            Conf::OUT_PROC, Decimals::get($this->transaction->getCurrency()));
 
-        if (Converter::inEur($fee, $this->transaction->get('currency')) < Conf::MIN_OUT_FEE) {
-            return ('EUR' === $this->transaction->get('currency')) ?
+        if (Converter::inEur($fee, $this->transaction->getCurrency()) < Conf::MIN_OUT_FEE) {
+            return ('EUR' === $this->transaction->getCurrency()) ?
                 Conf::MIN_OUT_FEE :
-                Converter::convert(Conf::MIN_OUT_FEE, 'EUR', $this->transaction->get('currency'));
+                Converter::convert(Conf::MIN_OUT_FEE, 'EUR', $this->transaction->getCurrency());
         } else {
             return $fee;
         }

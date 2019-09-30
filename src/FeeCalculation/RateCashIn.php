@@ -22,10 +22,10 @@ class RateCashIn implements Rate
      */
     public function getRate()
     {
-        $fee = Round::up($this->transaction->get('amount') * Conf::DEPOSIT_PROC, Decimals::get($this->transaction->get('currency')));
+        $fee = Round::up($this->transaction->getAmount() * Conf::DEPOSIT_PROC, Decimals::get($this->transaction->getCurrency()));
 
-        if (Converter::inEur($fee, $this->transaction->get('currency')) > Conf::MAX_DEPOSIT_FEE) {
-            return ('EUR' === $this->transaction->get('currency')) ? Conf::MAX_DEPOSIT_FEE : Converter::convert(Conf::MAX_DEPOSIT_FEE, 'EUR', $this->transaction->get('currency'));
+        if (Converter::inEur($fee, $this->transaction->getCurrency()) > Conf::MAX_DEPOSIT_FEE) {
+            return ('EUR' === $this->transaction->getCurrency()) ? Conf::MAX_DEPOSIT_FEE : Converter::convert(Conf::MAX_DEPOSIT_FEE, 'EUR', $this->transaction->getCurrency());
         } else {
             return $fee;
         }
